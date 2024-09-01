@@ -1,102 +1,84 @@
-// function simulateUserActions(contacts) {
-//   // Step 1: Click the menu icon to open the dropdown
-//   const menuIcon = document.querySelector('span[data-icon="menu"]');
-//   if (menuIcon) {
-//       menuIcon.click();
-
-//       // Step 2: Wait for the dropdown to appear and click "New group"
-//       setTimeout(() => {
-//           const newGroupButton = document.querySelector('div[aria-label="New group"]');
-//           if (newGroupButton) {
-//               newGroupButton.click();
-
-//               // Step 3: Add contacts to the new group
-//               addContactsToGroup(contacts);
-//           }
-//       }, 500);
-//   }
-// }
-
-// function addContactsToGroup(contacts) {
-//   // This function will add the contacts to the group (to be implemented)
-//   console.log("Adding contacts:", contacts);
-// }
-
+console.log("Content script running");
 
 function simulateUserActions(contacts) {
-  // Step 1: Click the menu icon to open the dropdown
-  const menuIcon = document.querySelector('span[data-icon="menu"]');
-  if (menuIcon) {
-      menuIcon.click();
+    console.log("Simulating user actions with contacts:", contacts);
 
-      // Step 2: Wait for the dropdown to appear and click "New group"
-      setTimeout(() => {
-          const newGroupButton = document.querySelector('div[aria-label="New group"]');
-          if (newGroupButton) {
-              newGroupButton.click();
+    const menuIcon = document.querySelector('[data-icon="menu"]');
+    if (menuIcon) {
+        menuIcon.click();
+        console.log("Menu icon clicked");
+    } else {
+        console.error("Menu icon not found");
+        return;
+    }
 
-              // Step 3: Wait for the new group dialog to open and add contacts
-              setTimeout(() => {
-                  addContactsToGroup(contacts);
-              }, 1000);
-          } else {
-              console.error("New group button not found");
-          }
-      }, 500);
-  } else {
-      console.error("Menu icon not found");
-  }
-}
+    setTimeout(() => {
+        const newGroupOption = document.querySelector('div[aria-label="New group"]');
+        if (newGroupOption) {
+            newGroupOption.click();
+            console.log("New group option clicked");
+        } else {
+            console.error("New group option not found");
+            return;
+        }
 
-function addContactsToGroup(contacts) {
-  contacts.forEach((contact, index) => {
-      setTimeout(() => {
-          // Simulate typing the contact's name/number
-          const inputField = document.querySelector('input[type="text"]');
-          if (inputField) {
-              inputField.value = contact;
-              inputField.dispatchEvent(new Event('input', { bubbles: true }));
+        setTimeout(() => {
+            contacts.forEach((contact, index) => {
+                setTimeout(() => {
+                    const inputField = document.querySelector('input[type="text"]');
+                    if (inputField) {
+                        inputField.value = contact;
+                        inputField.dispatchEvent(new Event('input', { bubbles: true }));
+                        console.log(`Input field updated with contact: ${contact}`);
 
-              // Simulate selecting the first matching result
-              setTimeout(() => {
-                  const firstResult = document.querySelector(`span[title="${contact}"]`);
-                  if (firstResult) {
-                      firstResult.click();
-                  } else {
-                      console.error(`Contact not found: ${contact}`);
-                  }
-              }, 500);
-          } else {
-              console.error("Contact input field not found");
-          }
-      }, index * 1500); // Delay between each contact
-  });
+                        setTimeout(() => {
+                            const contactButton = Array.from(document.querySelectorAll('div[role="button"]')).find(button => {
+                                const span = button.querySelector('span[dir="auto"]');
+                                return span && span.textContent.trim() === contact;
+                            });
 
-  // Step 4: Click the "Next" button after adding all contacts
-  setTimeout(() => {
-      const nextButton = document.querySelector('span[data-icon="forward-light"]');
-      if (nextButton) {
-          nextButton.click();
+                            if (contactButton) {
+                                contactButton.scrollIntoView();
+                                contactButton.click();
+                                console.log(`Clicked contact: ${contact}`);
+                            } else {
+                                console.error(`Contact button not found: ${contact}`);
+                            }
+                        }, 500);
+                    } else {
+                        console.error("Contact input field not found");
+                    }
+                }, index * 2000);
+            });
 
-          // Step 5: Set group name and create the group
-          setTimeout(() => {
-              const groupNameInput = document.querySelector('div[role="textbox"]');
-              if (groupNameInput) {
-                  groupNameInput.textContent = "New Group Name"; // Customize group name
-                  groupNameInput.dispatchEvent(new Event('input', { bubbles: true }));
+            setTimeout(() => {
+                const nextButton = document.querySelector('span[data-icon="forward-light"]');
+                if (nextButton) {
+                    nextButton.click();
+                    console.log("Next button clicked");
 
-                  const createButton = document.querySelector('span[data-icon="checkmark-light"]');
-                  if (createButton) {
-                      createButton.click();
-                  } else {
-                      console.error("Create button not found");
-                  }
-              } else {
-                  console.error("Group name input not found");
-              }
-          }, 1000);
-      } else {
-          console.error("Next button not found");
-      }
-  }, contacts.length * 1500 + 1000);
+                    setTimeout(() => {
+                        const groupNameInput = document.querySelector('div[role="textbox"]');
+                        if (groupNameInput) {
+                            groupNameInput.textContent = "New Group Name";
+                            groupNameInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            console.log("Group name input updated");
+
+                            const createButton = document.querySelector('span[data-icon="checkmark-light"]');
+                            if (createButton) {
+                                createButton.click();
+                                console.log("Create button clicked");
+                            } else {
+                                console.error("Create button not found");
+                            }
+                        } else {
+                            console.error("Group name input not found");
+                        }
+                    }, 500);
+                } else {
+                    console.error("Next button not found");
+                }
+            }, contacts.length * 2000 + 1000);
+        }, 1000);
+    }, 500);
 }
