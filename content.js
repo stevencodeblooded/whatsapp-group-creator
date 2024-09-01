@@ -32,19 +32,16 @@ function simulateUserActions(contacts) {
                         console.log(`Input field updated with contact: ${contact}`);
 
                         setTimeout(() => {
-                            const contactButton = Array.from(document.querySelectorAll('div[role="button"]')).find(button => {
-                                const span = button.querySelector('span[dir="auto"]');
-                                return span && span.textContent.trim() === contact;
-                            });
+                          const button = document.querySelector('div[role="button"] .x1n2onr6 img');
 
-                            if (contactButton) {
-                                contactButton.scrollIntoView();
-                                contactButton.click();
-                                console.log(`Clicked contact: ${contact}`);
-                            } else {
-                                console.error(`Contact button not found: ${contact}`);
-                            }
-                        }, 500);
+                          if (button) {
+                              button.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              button.parentElement.click();
+                              console.log("Button clicked successfully");
+                          } else {
+                              console.error("Button not found");
+                          }
+                        }, 1000);
                     } else {
                         console.error("Contact input field not found");
                     }
@@ -52,24 +49,26 @@ function simulateUserActions(contacts) {
             });
 
             setTimeout(() => {
-                const nextButton = document.querySelector('span[data-icon="forward-light"]');
+                const nextButton = document.querySelector('div[role="button"][aria-label="Next"]');
                 if (nextButton) {
-                    nextButton.click();
-                    console.log("Next button clicked");
+                  nextButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  nextButton.click();
+                  console.log("Next button clicked successfully");
 
                     setTimeout(() => {
                         const groupNameInput = document.querySelector('div[role="textbox"]');
                         if (groupNameInput) {
-                            groupNameInput.textContent = "New Group Name";
+                            groupNameInput.textContent = "Testing Group";
                             groupNameInput.dispatchEvent(new Event('input', { bubbles: true }));
                             console.log("Group name input updated");
 
-                            const createButton = document.querySelector('span[data-icon="checkmark-light"]');
-                            if (createButton) {
-                                createButton.click();
-                                console.log("Create button clicked");
+                            const createGroupButton = document.querySelector('div[role="button"][aria-label="Create group"]');
+                            if (createGroupButton) {
+                                createGroupButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                createGroupButton.click();
+                                console.log("Create group button clicked successfully");
                             } else {
-                                console.error("Create button not found");
+                                console.error("Create group button not found");
                             }
                         } else {
                             console.error("Group name input not found");
